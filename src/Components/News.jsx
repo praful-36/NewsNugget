@@ -19,13 +19,19 @@ const News = (props) => {
     props.setprogress(20);
     const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`;
     setLoading(true);
-    let data = await fetch(url);
-    props.setprogress(40);
-    let parsedData = await data.json();
-    props.setprogress(60);
-    setArticles(parsedData.articles);
-    setTotalResults(parsedData.totalResults); 
-    setLoading(false);
+    try {
+      let data = await fetch(url);
+      props.setprogress(40);
+      let parsedData = await data.json();
+      props.setprogress(60);
+      setArticles(parsedData.articles || []); // Ensure articles is an array
+      setTotalResults(parsedData.totalResults || 0); // Ensure totalResults is a number
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching the news articles: ", error);
+      setArticles([]); // Set articles to an empty array on error
+      setLoading(false);
+    }
     props.setprogress(100);
   };
 
